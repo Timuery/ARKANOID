@@ -43,30 +43,18 @@ public class Controller : MonoBehaviour
     public TextMeshProUGUI textTimer;
     private float timer;
 
-    private void FindPaddleAndBall()
+    public void FindPaddleAndBall()
     {
-        if (GameObject.FindGameObjectWithTag("ARKANOID") == null)
+        if (GameObject.FindGameObjectWithTag("ball") != null)
         {
-            Debug.Log("ARKANOID NOT FIND");
-            Instantiate(Paddle,PaddleSpawn);
-            return;
+            GameObject balls = GameObject.FindGameObjectWithTag("ball");
+            Destroy(balls);
+            Debug.Log("balls Destroyed");
+            Destroy(GameObject.FindGameObjectWithTag("ARKANOID"));
         }
-        Debug.Log("ARKANOID FIND");
-    }
-    private void DestroyPaddle()
-    {
-        if (GameObject.FindGameObjectsWithTag("ball") != null)
-        {
-            GameObject[] balls = GameObject.FindGameObjectsWithTag("ball");
-            foreach (GameObject ball in balls)
-            {
-                Destroy(ball);
-            }
-        }
-        if (GameObject.FindGameObjectWithTag("ARKANOID") != null)
-        {
-            Destroy(GameObject.Find("ARKANOID"));
-        }
+        Destroy(GameObject.FindGameObjectWithTag("ARKANOID"));
+        Debug.Log("ARKANOID NOT FIND");
+        Instantiate(Paddle,PaddleSpawn);
     }
     /// <summary>
     /// Изменение лучшего счёта в UI
@@ -94,10 +82,10 @@ public class Controller : MonoBehaviour
     /// <summary>
     /// Смена уровня на другой
     /// </summary>
-    private void ChangeLevel()
+    public void ChangeLevel()
     {
         StartLevel();
-        DestroyPaddle();
+        //DestroyPaddle();
         FindPaddleAndBall();
         textlevel.text = $"{levelNum}/{countLevels}";
     }

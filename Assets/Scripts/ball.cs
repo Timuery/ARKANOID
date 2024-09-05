@@ -17,6 +17,7 @@ public class ball : MonoBehaviour
     }
     void Start()
     {
+        Debug.Log("ball is Spawned");
         controller = GameObject.Find("Controller").GetComponent<Controller>();
     }
     void MouseClick()
@@ -64,9 +65,7 @@ public class ball : MonoBehaviour
         if (collision.transform.name == "RestartZone")
         {
             controller.hpcontroller(-1);
-            transform.parent = GameObject.FindGameObjectWithTag("ARKANOID").transform;
-            transform.localPosition = new Vector3(0, 0, 0);
-            rb2d.velocity = new Vector2(0, 0);
+            controller.FindPaddleAndBall();
         }
 
     }
