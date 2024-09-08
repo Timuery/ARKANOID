@@ -196,7 +196,7 @@ public class Controller : MonoBehaviour
     /// <summary>
     /// Смена уровня на другой
     /// </summary>
-    public void ChangeLevel()
+    public void ChangeLevel(int m=1)
     {
 
         // Удаление уровней
@@ -204,13 +204,16 @@ public class Controller : MonoBehaviour
         {
             data.MAXLEVEL = levelNum;
         }
-        if (levelNum == takelevel)
+        if (levelNum-1 == takelevel && GameObject.FindGameObjectsWithTag("block").Count<GameObject>() <= 0)
         {
             EndGame(true);
             return;
         }
+        levelNum += m;
+
+        Destroyed();
         DestroyedLevel();
-        StartLevel();
+        StartLevel(levelNum);
         FindPaddleAndBall();
 
         textlevel.text = $"{levelNum}/{takelevel}";
@@ -227,12 +230,10 @@ public class Controller : MonoBehaviour
     /// <summary>
     /// Запуск нового уровня
     /// </summary>
-    private void StartLevel()
+    private void StartLevel(int levelnumber)
     {
+        if (levelnumber != 0) positionToSpawnLevel.parent = Instantiate(level[levelnumber-1].gameObject, positionToSpawnLevel).transform;
         
-        positionToSpawnLevel.parent = Instantiate(level[levelNum].gameObject, positionToSpawnLevel).transform;
-        
-        levelNum += 1;
     }
 
     /// <summary>
@@ -281,6 +282,19 @@ public class Controller : MonoBehaviour
     public void ZeroSpeed()
     {
         Time.timeScale = 0f;
+        GameObject[] balls = GameObject.FindGameObjectsWithTag("ball");
+        foreach (GameObject ball in balls)
+        {
+            // Получаем компонент Rigidbody2D
+            Rigidbody2D rb = ball.GetComponent<Rigidbody2D>();
+
+            // Проверяем, есть ли компонент Rigidbody2D
+            if (rb != null)
+            {
+                // Отключаем компонент
+                rb.simulated = false;
+            }
+        }
     }
     /// <summary>
     /// Своеобазное настройка времени используя <paramref name="speed"/>
@@ -296,6 +310,20 @@ public class Controller : MonoBehaviour
     public void FullGameSpeed()
     {
         Time.timeScale = 1f;
+
+        GameObject[] balls = GameObject.FindGameObjectsWithTag("ball");
+        foreach (GameObject ball in balls)
+        {
+            // Получаем компонент Rigidbody2D
+            Rigidbody2D rb = ball.GetComponent<Rigidbody2D>();
+
+            // Проверяем, есть ли компонент Rigidbody2D
+            if (rb != null)
+            {
+                // Отключаем компонент
+                rb.simulated = true;
+            }
+        }
     }
 
     /// <summary>
@@ -448,6 +476,7 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        FindInput();
         TimeSpaning();
         if (gameIsPause && Time.timeScale > 0f)
         {
@@ -457,6 +486,53 @@ public class Controller : MonoBehaviour
         {
             FullGameSpeed();
         }
+    }
+    void FindInput()
+    {
+        if (gameIsStarted && !gameIsPause)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                
+                if (levelNum == 1) levelNum = takelevel + 1;
+                NullefireData();
+                ChangeLevel(-1);
+                gameIsStarted = false;
+                StopTimer();
+                gameIsStarted = true;
+                return;
+
+            }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                if (levelNum >= takelevel) levelNum = 0;
+                NullefireData();
+                ChangeLevel(1);
+                gameIsStarted = false;
+                StopTimer();
+                gameIsStarted = true;
+                return;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Escape) & gameIsStarted)
+        {
+            if (!youLose.activeSelf)
+            {
+                
+                textloseText.text = "ПАУЗА";
+                loseText.text = "Очки: " + textScore.text;
+                ZeroSpeed();
+                youLose.SetActive(true);
+                gameIsPause = true;
+            }
+            else
+            {
+                gameIsPause = false;
+                FullGameSpeed(); youLose.SetActive(false);
+            }
+            
+        }
+
     }
     private void OnApplicationQuit()
     {

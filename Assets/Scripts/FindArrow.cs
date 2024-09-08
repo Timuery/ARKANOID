@@ -24,7 +24,7 @@ public class FindArrow : MonoBehaviour
         */
         
         var position = FindMouse();
-        if (position.x >= -18f + transform.localScale.x/2  && position.x <= 11.5f - transform.localScale.x / 2)
+        if (position.x >= -18.4f + transform.localScale.x/2  && position.x <= 4f - transform.localScale.x / 2)
         {
             transform.position = new Vector3(position.x, -8.5f, 0);
         }

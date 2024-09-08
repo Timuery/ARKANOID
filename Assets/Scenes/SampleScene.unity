@@ -2160,7 +2160,7 @@ GameObject:
   - component: {fileID: 480602092}
   - component: {fileID: 480602091}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: "\u041E\u0427\u041A\u0418"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7419,7 +7419,7 @@ GameObject:
   - component: {fileID: 1552778678}
   - component: {fileID: 1552778677}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: "\u0412\u042B \u041F\u0420\u041E\u0413\u0420\u0410\u041B\u0418"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
