@@ -1,10 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
+public class PlayerData
+{
+    public int HIGHSCORE;
+    public int BLOCKDESTROYED;
+    public float ALLTIMEINSECONDS;
+    public int MAXLEVEL;
+    public int MAXCOMBO;
+    public int POUNCES;
+
+}
 public class Controller : MonoBehaviour
 {
 
@@ -16,8 +28,9 @@ public class Controller : MonoBehaviour
     [SerializeField] private GameObject gameMenu;
     [SerializeField] private GameObject standartMenu;
     [SerializeField] private GameObject youLose;
-    [SerializeField] private GameObject statisticScreen;
 
+    
+    
     [HideInInspector] public bool gameIsStarted = false;
     [HideInInspector] public bool gameIsPause = false;
 
@@ -29,8 +42,9 @@ public class Controller : MonoBehaviour
     public int score;
     private int countCombo;
 
-    [Space] public int levelNum=0;
+    [Space] public int levelNum = 0;
     public int countLevels;
+    private int takelevel;
     [SerializeField] private List<GameObject> level = new List<GameObject>();
 
     public Transform positionToSpawnLevel;
@@ -41,53 +55,172 @@ public class Controller : MonoBehaviour
     public TextMeshProUGUI textCombo;
     public TextMeshProUGUI textlevel;
     public TextMeshProUGUI textTimer;
+    public TextMeshProUGUI loseText;
+    public TextMeshProUGUI textloseText;
+    public TextMeshProUGUI textTakeLevel;
+    public TextMeshProUGUI textCountLevels;
+    public Scrollbar scrollbar;
     private float timer;
 
-    public void FindPaddleAndBall()
+    [Space, Space] public GameObject statsPanel;
+    public List<TextMeshProUGUI> stats = new List<TextMeshProUGUI>();
+    public float Timer { get => timer; set => timer = value; }
+
+
+
+
+    [HideInInspector] public PlayerData data;
+
+    public List<Sprite> blockHP = new List<Sprite>();
+
+
+    public void OpenStats()
     {
-        if (GameObject.FindGameObjectWithTag("ball") != null)
+        statsPanel.SetActive(true);
+        StatsUpdate();
+    }
+    public void HideStats()
+    {
+        statsPanel.SetActive(false);
+    }
+    public void Start()
+    {
+        standartMenu.SetActive(true);
+        //IfNullPrefs();
+        data = LoadPlayerData();
+        textCountLevels.text = $"/{countLevels}";
+        textTakeLevel.text = $"{0}";
+        scrollbar.size = 1.0f / countLevels;
+        scrollbar.onValueChanged.AddListener(OnScrollbarValueChanged);
+    }
+
+
+    
+
+    //Поик и установка шара
+    public void FindPaddleAndBall(){ Destroyed(); Instantiate(Paddle, PaddleSpawn); }
+    public void Destroyed()
+    {
+        if (GameObject.FindGameObjectsWithTag("ball").Length > 0)
         {
-            GameObject balls = GameObject.FindGameObjectWithTag("ball");
-            Destroy(balls);
-            Debug.Log("balls Destroyed");
-            Destroy(GameObject.FindGameObjectWithTag("ARKANOID"));
+            foreach (var b in GameObject.FindGameObjectsWithTag("ball"))
+            {
+                Destroy(b);
+            }
         }
         Destroy(GameObject.FindGameObjectWithTag("ARKANOID"));
-        Debug.Log("ARKANOID NOT FIND");
-        Instantiate(Paddle,PaddleSpawn);
+    }
+
+    public void DestroyedLevel()
+    {
+        GameObject[] allLevels = GameObject.FindGameObjectsWithTag("LEVEL");
+        foreach (var level in allLevels)
+        {
+            Destroy(level);
+        }
+    }
+    public void FullHp()
+    {
+        foreach (var item in hPobjects)
+        {
+            item.SetActive(true);
+        }
+        hP = hPobjects.Count;
+    }
+    public void NullefireData()
+    {
+        score = 0;
+        countCombo = 0;
+        ChangeCombo();
+        ChangeScore();
+    }
+    public void SavePlayerData(PlayerData playerData)
+    {
+        PlayerPrefs.SetInt("HIGHSCORE", playerData.HIGHSCORE);
+        PlayerPrefs.SetInt("BLOCKDESTROYED", playerData.BLOCKDESTROYED);
+        PlayerPrefs.SetFloat("ALLTIMEINSECONDS", playerData.ALLTIMEINSECONDS);
+        PlayerPrefs.SetInt("MAXLEVEL", playerData.MAXLEVEL);
+        PlayerPrefs.SetInt("MAXCOMBO", playerData.MAXCOMBO);
+        PlayerPrefs.SetInt("POUNCES", playerData.POUNCES);
+        PlayerPrefs.Save();
+    }
+    public PlayerData LoadPlayerData()
+    {
+        PlayerData playerData = new PlayerData();
+        
+        playerData.HIGHSCORE = PlayerPrefs.GetInt("HIGHSCORE", 0);
+        playerData.BLOCKDESTROYED = PlayerPrefs.GetInt("BLOCKDESTROYED", 0);
+        playerData.ALLTIMEINSECONDS = PlayerPrefs.GetFloat("ALLTIMEINSECONDS", 0);
+        playerData.MAXLEVEL = PlayerPrefs.GetInt("MAXLEVEL", 0);
+        playerData.MAXCOMBO = PlayerPrefs.GetInt("MAXCOMBO", 0);
+        playerData.POUNCES = PlayerPrefs.GetInt("POUNCES", 0);
+
+        return playerData;
+    }
+    public void StatsUpdate()
+    {
+        stats[0].text = $"{data.HIGHSCORE:D8}";
+        stats[1].text = $"{data.BLOCKDESTROYED:D8}";
+        TimeSpan timespan = TimeSpan.FromSeconds(data.ALLTIMEINSECONDS);
+        string formattedTime = string.Format("{0:D2}:{1:D2}:{2:D2}:{3:D3}",
+            timespan.Hours,
+            timespan.Minutes,
+            timespan.Seconds,
+            timespan.Milliseconds);
+        stats[2].text = $"{formattedTime}";
+        stats[3].text = $"{data.MAXLEVEL:D2}";
+        stats[4].text = $"{data.MAXCOMBO:D3}";
+        stats[5].text = $"{data.POUNCES:D8}";
     }
     /// <summary>
     /// Изменение лучшего счёта в UI
     /// </summary>
     /// 
-   
-    private void ChangeMegaScore()
-    {
-        textMegaScore.text = $"{score:D8}"; 
-    }
+
+    private void ChangeMegaScore(){if (score > data.HIGHSCORE) data.HIGHSCORE = score; StartMegaScore(); }
+
+    /// <summary>
+    /// Изначально значени MegaScore
+    /// </summary>
+    private void StartMegaScore() {textMegaScore.text = $"{data.HIGHSCORE:D8}"; }
+        
     /// <summary>
     /// Изменение текущего счёта в UI
     /// </summary>
-    private void ChangeScore()
-    {
-        textScore.text = $"{score:D8}";
-    }
+    private void ChangeScore() { textScore.text = $"{score:D8}"; ChangeMegaScore(); }
+
     /// <summary>
     /// Изменение количества комбо в UI
     /// </summary>
-    private void ChangeCombo()
-    {
-        textCombo.text = $"{countCombo:D3}";
-    }
+    private void ChangeCombo() { textCombo.text = $"{countCombo:D3}"; }
     /// <summary>
     /// Смена уровня на другой
     /// </summary>
     public void ChangeLevel()
     {
+
+        // Удаление уровней
+        if(levelNum > data.MAXLEVEL)
+        {
+            data.MAXLEVEL = levelNum;
+        }
+        if (levelNum == takelevel)
+        {
+            EndGame(true);
+            return;
+        }
+        DestroyedLevel();
         StartLevel();
-        //DestroyPaddle();
         FindPaddleAndBall();
-        textlevel.text = $"{levelNum}/{countLevels}";
+
+        textlevel.text = $"{levelNum}/{takelevel}";
+    }
+
+    public void OnScrollbarValueChanged(float value)
+    {
+        // Определяем выбранный уровень, используя значение scrollbar
+        takelevel = Mathf.RoundToInt(value * (countLevels - 1)) + 1;
+        textTakeLevel.text = $"{takelevel}";
     }
 
 
@@ -98,6 +231,7 @@ public class Controller : MonoBehaviour
     {
         
         positionToSpawnLevel.parent = Instantiate(level[levelNum].gameObject, positionToSpawnLevel).transform;
+        
         levelNum += 1;
     }
 
@@ -106,11 +240,11 @@ public class Controller : MonoBehaviour
     /// </summary>
     private void TimeSpaning()
     {
-        if (gameIsStarted && !gameIsPause)
+        if (!gameIsPause)
         {
-            timer += Time.deltaTime;
+            Timer += Time.deltaTime;
 
-            TimeSpan timespan = TimeSpan.FromSeconds(timer);
+            TimeSpan timespan = TimeSpan.FromSeconds(Timer);
 
             string formattedTime = string.Format("{0:D2}:{1:D2}:{2:D2}:{3:D3}",
                 timespan.Hours,
@@ -118,6 +252,7 @@ public class Controller : MonoBehaviour
                 timespan.Seconds,
                 timespan.Milliseconds);
             textTimer.text = formattedTime;
+            data.ALLTIMEINSECONDS += Time.deltaTime;
         }
     }
     /// <summary>
@@ -128,7 +263,7 @@ public class Controller : MonoBehaviour
         if (!gameIsStarted && textTimer.text != "00:00:00:000")
         {
             textTimer.text = "00:00:00:000";
-            timer = 0f;
+            Timer = 0f;
         }
     }
     public void Volume()
@@ -173,15 +308,23 @@ public class Controller : MonoBehaviour
         hP += miplu;
         if (hP > hPobjects.Count)
         {
-            hP = 2;
+            hP = 4;
         }
-        if (hP < 0)
+        if (hP <= 0)
         {
-            ZeroSpeed();
-            gameIsPause = true;
+            //проигрышь
+            EndGame(false);
+        }
+
+        foreach (var item in hPobjects)
+        {
+            item.SetActive(false);
+        }
+        for (int i=0;  i<hP; i++)
+        {
+            hPobjects[i].SetActive(true);
         }
     }
-
     /// <summary>
     /// Добавление значения к очкам используя <see cref="countCombo"/>, параметр <paramref name="CountCombo"/> является значением
     /// для подсчёта количества комбо, а знечение уже определяется по формуле получая значение <see cref="score"/>
@@ -199,6 +342,10 @@ public class Controller : MonoBehaviour
     public void AddCombo()
     {
         countCombo += 1;
+        if (countCombo > data.MAXCOMBO)
+        {
+            data.MAXCOMBO = countCombo;
+        }
         ChangeCombo();
     }
     /// <summary>
@@ -214,48 +361,94 @@ public class Controller : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        Debug.Log("START") ;
-        gameMenu.SetActive(true);
-        standartMenu.SetActive(false);
-        youLose.SetActive(false);
+        if (takelevel != 0)
+        {
+            SavePlayerData(data);
+            StatsUpdate();
+            FullHp();
+            NullefireData();
+            StartMegaScore();
 
-        levelNum = 0;
-        ChangeLevel();
+            gameIsPause = true;
+            gameIsStarted = false;
+            StopTimer();
+
+            gameIsStarted = true;
+            gameIsPause = false;
+
+            gameMenu.SetActive(true);
+            standartMenu.SetActive(false);
+            youLose.SetActive(false);
+            StopTimer();
+            levelNum = 0;
+            ChangeLevel();
+            
+        }
+        
     }
 
-    public void YouLose()
+    public void EndGame(bool win)
     {
         youLose.SetActive(true);
         ZeroSpeed();
+        Destroyed();
+        DestroyedLevel();
+        if (score > data.HIGHSCORE)
+        {
+            loseText.text = "Рекорд: " + textScore.text;
+        }
+        else
+        {
+            loseText.text = "Очки: " + textScore.text;
+        }
+        
+        if (!win)
+        {
+            textloseText.text = "ВЫ ПРОИГРАЛИ";
+        }
+        else
+        {
+            textloseText.text = "ПОБЕДА!";
+        }
+        
+        
         gameIsPause = true;
         gameIsStarted = false;
     }
+
     public void Exit()
     {
         Application.Quit();
+
     }
 
     public void CountBlocks()
     {
-        Debug.Log(GameObject.FindGameObjectsWithTag("block"));
         if (GameObject.FindGameObjectsWithTag("block").Length == 1)
         {
             ChangeLevel();
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public void GoToMenu()
     {
-       // StandartMenu.SetActive(true);
+        SavePlayerData(data);
+        StatsUpdate();
+        Destroyed();
+        DestroyedLevel();
+        StopTimer();
+        gameIsPause = true;
+        gameIsStarted = false;
+        standartMenu.SetActive(true);
+        youLose.SetActive(false);
+        gameMenu.SetActive(false); 
     }
+    // Start is called before the first frame update
 
     // Update is called once per frame
     void Update()
     {
-        
         TimeSpaning();
-        StopTimer();
         if (gameIsPause && Time.timeScale > 0f)
         {
             ZeroSpeed();
@@ -264,5 +457,9 @@ public class Controller : MonoBehaviour
         {
             FullGameSpeed();
         }
+    }
+    private void OnApplicationQuit()
+    {
+        SavePlayerData(data);
     }
 }

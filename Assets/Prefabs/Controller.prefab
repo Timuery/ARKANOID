@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1828612902310679341}
   - component: {fileID: 4379678168249816309}
+  - component: {fileID: 4018640390944285530}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -44,9 +45,177 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c111dee8487a7af4088ed26d664a4402, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VolumeLevel: 2
+  volumeLevel: 2
   spritelist:
   - {fileID: 21300000, guid: 21edcf81cd6866e4194f30df0f7423a0, type: 3}
   - {fileID: 21300000, guid: b4cd2391f1fae9d40840e22c46f128d5, type: 3}
   - {fileID: 21300000, guid: c4a6c3359f7e68349bb2993907b2dba2, type: 3}
-  VolumeButton: {fileID: 0}
+  volumeButton: {fileID: 0}
+  gameMenu: {fileID: 0}
+  standartMenu: {fileID: 0}
+  youLose: {fileID: 0}
+  gameIsStarted: 0
+  gameIsPause: 0
+  Paddle: {fileID: 8816390729993953122, guid: b37fbec28bbb0e344a43e99c6f0e56fb, type: 3}
+  PaddleSpawn: {fileID: 0}
+  hP: 4
+  hPobjects:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  score: 0
+  levelNum: 0
+  countLevels: 25
+  level:
+  - {fileID: 1245906962354067680, guid: acbbee8f54e3daf4686bc22fa007be29, type: 3}
+  - {fileID: 1245906962354067680, guid: 61bb6de00a76a7d45bac0833406fb431, type: 3}
+  - {fileID: 1245906962354067680, guid: c22afe815cdd9db4e92578ced5d5a5a7, type: 3}
+  - {fileID: 1245906962354067680, guid: 73a4d29cdaabf6b4da5b1ce5e9461bf4, type: 3}
+  - {fileID: 1245906962354067680, guid: 67c52adb6b07f4846849f7a40f126ed7, type: 3}
+  - {fileID: 1245906962354067680, guid: 5d5b230560f1de94ca2ad68f9a4360af, type: 3}
+  - {fileID: 1245906962354067680, guid: a2d26d72121d70a4e8b7a21dab41fa8a, type: 3}
+  - {fileID: 1245906962354067680, guid: f8233b56574884f45a4d4e067a61c577, type: 3}
+  - {fileID: 1245906962354067680, guid: 93693c2f79b195f4aa8919059f378c93, type: 3}
+  - {fileID: 1245906962354067680, guid: b49a7f478a6b77844866fd1d7d3b7684, type: 3}
+  - {fileID: 1245906962354067680, guid: 9572600e6c27e3543834ed6673af3bfb, type: 3}
+  positionToSpawnLevel: {fileID: 0}
+  textMegaScore: {fileID: 0}
+  textScore: {fileID: 0}
+  textCombo: {fileID: 0}
+  textlevel: {fileID: 0}
+  textTimer: {fileID: 0}
+  loseText: {fileID: 0}
+  textloseText: {fileID: 0}
+  textTakeLevel: {fileID: 0}
+  textCountLevels: {fileID: 0}
+  scrollbar: {fileID: 0}
+  statsPanel: {fileID: 0}
+  stats:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  blockHP:
+  - {fileID: 21300000, guid: 7c64795539a757f449646faf0d05ffaa, type: 3}
+  - {fileID: 21300000, guid: 0bac2982b2a169347bcbd05ab73fd9e7, type: 3}
+  - {fileID: 21300000, guid: 8b9ffe7a856f53947a995cbd07111437, type: 3}
+--- !u!114 &4018640390944285530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5300616039136907156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 290f16ae35e81884aacf9a77f3754dcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allEffects:
+  - id: 0
+    effectName: DAMAGEBALL
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 1
+    damage: 2
+    newTexture: {fileID: 2800000, guid: 4dd977984e0048c4abd443269ffd05e7, type: 3}
+    isTemporary: 1
+  - id: 1
+    effectName: FIREBOLL
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 1
+    damage: 3
+    newTexture: {fileID: 2800000, guid: 9fc5c2dc9527d814ab2cd7ce453059e0, type: 3}
+    isTemporary: 1
+  - id: 2
+    effectName: ZEROBALL
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 1
+    damage: 0
+    newTexture: {fileID: 0}
+    isTemporary: 1
+  - id: 3
+    effectName: PLUSSPEED
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 2
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 1
+  - id: 4
+    effectName: MINUSSPEED
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 0.5
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 1
+  - id: 5
+    effectName: BIGBALL
+    duration: 20
+    sizeMultiplier: 2
+    speedMultiplier: 1
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 1
+  - id: 6
+    effectName: SMALLBALL
+    duration: 20
+    sizeMultiplier: 0.5
+    speedMultiplier: 1
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 1
+  - id: 7
+    effectName: VERYBIGBALL
+    duration: 20
+    sizeMultiplier: 3
+    speedMultiplier: 1
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 1
+  - id: 8
+    effectName: BUILD
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 1
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 1
+  - id: 9
+    effectName: Multiply2
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 1
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 0
+  - id: 10
+    effectName: Multiply3
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 1
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 0
+  - id: 11
+    effectName: Multiply5
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 1
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 0
+  - id: 12
+    effectName: Multiply10
+    duration: 20
+    sizeMultiplier: 1
+    speedMultiplier: 1
+    damage: 1
+    newTexture: {fileID: 0}
+    isTemporary: 1

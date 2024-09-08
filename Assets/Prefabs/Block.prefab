@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5865878770353464303}
   - component: {fileID: 202136464630380702}
   - component: {fileID: -188599464058927122}
+  - component: {fileID: 3144265207606886397}
   m_Layer: 0
   m_Name: Block
   m_TagString: block
@@ -74,12 +75,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 18795754c150942408783652ba840807, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7c64795539a757f449646faf0d05ffaa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.81, y: 0.48}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -122,7 +123,7 @@ PolygonCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1.81, y: 0.48}
-    newSize: {x: 1, y: 1}
+    newSize: {x: 1.81, y: 0.48}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -145,3 +146,16 @@ PolygonCollider2D:
       - {x: 0.8089293, y: 0.21300219}
       - {x: 0.7478919, y: 0.2415011}
   m_UseDelaunayMesh: 0
+--- !u!114 &3144265207606886397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6430337538738937346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfe26a12affc1424bb960aa4b71073aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp: 1

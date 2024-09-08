@@ -8,11 +8,13 @@ TagManager:
   - LEVEL
   - ball
   - ARKANOID
+  - WALL
+  - Buff
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - ball
   - Water
   - UI
   - 
