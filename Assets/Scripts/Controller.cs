@@ -20,7 +20,7 @@ public class PlayerData
 public class Controller : MonoBehaviour
 {
 
-    public int volumeLevel = 2;
+    public int volumeLevel = 1;
     public List<Sprite> spritelist = new List<Sprite>();
     public Button volumeButton;
 
@@ -199,23 +199,23 @@ public class Controller : MonoBehaviour
     public void ChangeLevel(int m=1)
     {
 
-        // Удаление уровней
-        if(levelNum > data.MAXLEVEL)
-        {
-            data.MAXLEVEL = levelNum;
-        }
-        if (levelNum-1 == takelevel && GameObject.FindGameObjectsWithTag("block").Count<GameObject>() <= 0)
-        {
-            EndGame(true);
-            return;
-        }
+        
         levelNum += m;
 
         Destroyed();
         DestroyedLevel();
         StartLevel(levelNum);
         FindPaddleAndBall();
-
+        // Удаление уровней
+        if (levelNum > data.MAXLEVEL)
+        {
+            data.MAXLEVEL = levelNum;
+        }
+        if (levelNum == takelevel && GameObject.FindGameObjectsWithTag("block").Count<GameObject>() <= 0)
+        {
+            EndGame(true);
+            return;
+        }
         textlevel.text = $"{levelNum}/{takelevel}";
     }
 
@@ -270,7 +270,7 @@ public class Controller : MonoBehaviour
     public void Volume()
     {
         volumeLevel += 1;
-        if (volumeLevel > 2)
+        if (volumeLevel > 1)
         {
             volumeLevel = 0;
         }
@@ -452,9 +452,14 @@ public class Controller : MonoBehaviour
 
     public void CountBlocks()
     {
+        if (GameObject.FindGameObjectsWithTag("block").Length == 1 && levelNum == takelevel)
+        {
+            EndGame(true);
+            return;
+        }
         if (GameObject.FindGameObjectsWithTag("block").Length == 1)
         {
-            ChangeLevel();
+            ChangeLevel(1);
         }
     }
 
@@ -494,10 +499,10 @@ public class Controller : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 
-                if (levelNum == 1) levelNum = takelevel + 1;
+                if (levelNum == 1) levelNum = takelevel+1;
                 NullefireData();
-                ChangeLevel(-1);
                 gameIsStarted = false;
+                ChangeLevel(-1);
                 StopTimer();
                 gameIsStarted = true;
                 return;

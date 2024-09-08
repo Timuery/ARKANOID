@@ -23,6 +23,7 @@ public class ball : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+         
         effectController = FindObjectOfType<EffectController>();
         currentSpeed = baseSpeed;
         currentDamage = baseDamage;
@@ -31,10 +32,15 @@ public class ball : MonoBehaviour
         ballRenderer = GetComponent<SpriteRenderer>();
 
         ballSource = GetComponent<AudioSource>();
+        
         Debug.Log("ball is Spawned");
         controller = GameObject.Find("Controller").GetComponent<Controller>();
+        if (controller.volumeLevel == 0)
+        {
+            ballSource.volume = 0;
+        }
     }
-    void StartSpeed()
+        void StartSpeed()
     {
         rb2d = GetComponent<Rigidbody2D>();
         rb2d.velocity = Vector2.up * baseSpeed;
