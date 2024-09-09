@@ -92,6 +92,7 @@ public class Controller : MonoBehaviour
         textTakeLevel.text = $"{0}";
         scrollbar.size = 1.0f / countLevels;
         scrollbar.onValueChanged.AddListener(OnScrollbarValueChanged);
+        StartScrollbar();
     }
 
 
@@ -157,6 +158,9 @@ public class Controller : MonoBehaviour
 
         return playerData;
     }
+    /// <summary>
+    /// Обновление статусов
+    /// </summary>
     public void StatsUpdate()
     {
         stats[0].text = $"{data.HIGHSCORE:D8}";
@@ -172,11 +176,32 @@ public class Controller : MonoBehaviour
         stats[4].text = $"{data.MAXCOMBO:D3}";
         stats[5].text = $"{data.POUNCES:D8}";
     }
+
+    public void NullStats()
+    {
+        data.BLOCKDESTROYED = 0;
+        data.MAXCOMBO = 0;
+        data.HIGHSCORE = 0;
+        data.MAXLEVEL = 0;
+        data.POUNCES = 0;
+        SavePlayerData(data);
+        StatsUpdate();
+    }
+    public void GoToMenuInZoneGame()
+    {
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+        if (!gameIsStarted && gameIsPause && hit.collider.name == "ZoneToMenu")
+            if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse1))
+                GoToMenu();
+    }
+
+
+
     /// <summary>
     /// Изменение лучшего счёта в UI
     /// </summary>
     /// 
-
     private void ChangeMegaScore(){if (score > data.HIGHSCORE) data.HIGHSCORE = score; StartMegaScore(); }
 
     /// <summary>
@@ -223,6 +248,11 @@ public class Controller : MonoBehaviour
     {
         // Определяем выбранный уровень, используя значение scrollbar
         takelevel = Mathf.RoundToInt(value * (countLevels - 1)) + 1;
+        textTakeLevel.text = $"{takelevel}";
+    }
+    public void StartScrollbar()
+    {
+        takelevel = 1;
         textTakeLevel.text = $"{takelevel}";
     }
 
@@ -364,6 +394,8 @@ public class Controller : MonoBehaviour
         score += 200 + (100 * (countCombo - 1));
         ChangeScore();
     }
+
+    
     /// <summary>
     /// Добавляет значение комбо
     /// </summary>
@@ -400,7 +432,6 @@ public class Controller : MonoBehaviour
             gameIsPause = true;
             gameIsStarted = false;
             StopTimer();
-
             gameIsStarted = true;
             gameIsPause = false;
 
@@ -410,9 +441,7 @@ public class Controller : MonoBehaviour
             StopTimer();
             levelNum = 0;
             ChangeLevel();
-            
         }
-        
     }
 
     public void EndGame(bool win)
@@ -498,7 +527,6 @@ public class Controller : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                
                 if (levelNum == 1) levelNum = takelevel+1;
                 NullefireData();
                 gameIsStarted = false;
@@ -517,6 +545,10 @@ public class Controller : MonoBehaviour
                 StopTimer();
                 gameIsStarted = true;
                 return;
+            }
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                StartGame();
             }
         }
         if (Input.GetKeyDown(KeyCode.Escape) & gameIsStarted)
@@ -537,6 +569,7 @@ public class Controller : MonoBehaviour
             }
             
         }
+        
 
     }
     private void OnApplicationQuit()

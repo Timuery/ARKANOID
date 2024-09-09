@@ -93,14 +93,6 @@ public class ball : MonoBehaviour
             // Применяем эффект
             ApplyEffect(activeEffects[i].effectData);
 
-            // Удаляем эффект, если его время истекло
-            /*if (activeEffects.Count < 0)
-            {
-                ballRenderer.sprite = ballPrefab.GetComponent<SpriteRenderer>().sprite;
-                transform.localScale = originalScale;
-                currentSpeed = baseSpeed;
-                currentDamage = baseDamage;
-            }*/
             if (activeEffects[i].remainingDuration < 0)
             {
                 Debug.Log("I: " + i.ToString() + " | CountEffects: " + activeEffects.Count + " | activeEffect: " + activeEffects);
@@ -270,17 +262,6 @@ public class ball : MonoBehaviour
             }
             Destroy(gameObject);
         }
-        
-        /*if (collision.transform.tag == "ball")
-        {
-            Vector2 collisionNormal = collision.contacts[0].normal;
-            Vector2 currentVelocity = transform.GetComponent<Rigidbody2D>().velocity;
-            Vector2 reflectedVelocity = Vector2.Reflect(currentVelocity, collisionNormal);
-            transform.GetComponent<Rigidbody2D>().velocity = reflectedVelocity;
-        }*/
-        
-
-
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

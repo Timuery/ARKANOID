@@ -18,16 +18,16 @@ public class FindArrow : MonoBehaviour
     {   /*
         razmerPlatform = 7; maxleft = -14.5f;
         razmerPlatform 3; maxleft = -16.5;
-        razmrPlatform 1 = maxleft = -17.5;
+        razmrPlatform 1 = maxleft = -17.5;  
         1 = 0.5f
         7-3=4,4/2 = 2 =
         */
         
         var position = FindMouse();
         if (position.x >= -18.4f + transform.localScale.x/2  && position.x <= 4f - transform.localScale.x / 2)
-        {
-            transform.position = new Vector3(position.x, -8.5f, 0);
-        }
+            transform.position = new Vector3(position.x, -8f, 0);
+        if (position.x > 4f - transform.localScale.x / 2) transform.position = new Vector3(4.4f - transform.localScale.x / 2, -8f, 0);
+        else if (position.x <= -18.4f + transform.localScale.x / 2) transform.position = new Vector3(-15.4f - transform.localScale.x / 2, -8f, 0);
         
         
     }
